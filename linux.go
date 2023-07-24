@@ -8,17 +8,17 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"regexp"
 	"strconv"
 )
 
 // Get returns the current wallpaper.
 func Get() (string, error) {
 	if isGNOMECompliant() {
-		versionCode, err := parseDconf("lsb_release", "-a")
-		if err != nil {
-			log.Fatal(err)
+
+		if useDarkMode() {
+			return parseDconf("gsettings", "get", "org.gnome.desktop.background", "picture-uri-dark")
 		}
-		log.Printf("versionCode: %v\n", versionCode)
 		return parseDconf("gsettings", "get", "org.gnome.desktop.background", "picture-uri")
 	}
 
@@ -43,7 +43,11 @@ func Get() (string, error) {
 // SetFromFile sets wallpaper from a file path.
 func SetFromFile(file string) error {
 	if isGNOMECompliant() {
+		if useDarkMode() {
+			return exec.Command("gsettings", "set", "org.gnome.desktop.background", "picture-uri-dark", strconv.Quote("file://"+file)).Run()
+		}
 		return exec.Command("gsettings", "set", "org.gnome.desktop.background", "picture-uri", strconv.Quote("file://"+file)).Run()
+
 	}
 
 	switch Desktop {
@@ -100,4 +104,16 @@ func getCacheDir() (string, error) {
 		return "", err
 	}
 	return filepath.Join(usr.HomeDir, ".cache"), nil
+}
+
+func getOSVersion() (string, error) {
+	output, err := exec.Command("lsb_release", "-a").Output()
+	if err != nil {
+		log.Printf("Err: %v\n", err)
+		return "", err
+	}
+	var re = regexp.MustCompile(`(?m)Release:\s+(.*)`)
+	ret := re.FindStringSubmatch(string(output))
+
+	return ret[1], nil
 }

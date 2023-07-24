@@ -53,3 +53,27 @@ func (mode Mode) getGNOMEString() string {
 		panic("invalid wallpaper mode")
 	}
 }
+
+func getColorScheme() (string, error) {
+	return parseDconf("gsettings", "get", "org.gnome.desktop.interface", "color-scheme")
+}
+
+func isDarkMode() bool {
+	settings, err := getColorScheme()
+	if err != nil {
+		return false
+	}
+	return strings.Contains(settings, "dark")
+}
+
+func useDarkMode() bool {
+	osv, err := getOSVersion()
+	if err != nil {
+		return false
+	}
+
+	if osv == "22.04" {
+		return isDarkMode()
+	}
+	return false
+}
