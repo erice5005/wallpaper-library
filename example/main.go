@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/reujab/wallpaper"
+	"https://github.com/erice5005/wallpaper-library"
 )
 
 func main() {
@@ -15,13 +15,13 @@ func main() {
 
 	fmt.Println("Current wallpaper:", background)
 
-	err = wallpaper.SetFromFile("/usr/share/backgrounds/gnome/adwaita-day.jpg")
-	if err != nil {
-		panic(err)
-	}
+	// err = wallpaper.SetFromFile("/usr/share/backgrounds/gnome/adwaita-day.jpg")
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	err = wallpaper.SetFromURL("https://i.imgur.com/pIwrYeM.jpg")
-	if err != nil {
-		panic(err)
-	}
+	// err = wallpaper.SetFromURL("https://i.imgur.com/pIwrYeM.jpg")
+	// if err != nil {
+	// 	panic(err)
+	// }
 }

@@ -1,8 +1,10 @@
+//go:build linux
 // +build linux
 
 package wallpaper
 
 import (
+	"log"
 	"os/exec"
 	"os/user"
 	"path/filepath"
@@ -12,6 +14,11 @@ import (
 // Get returns the current wallpaper.
 func Get() (string, error) {
 	if isGNOMECompliant() {
+		versionCode, err := parseDconf("lsb_release", "-a")
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("versionCode: %v\n", versionCode)
 		return parseDconf("gsettings", "get", "org.gnome.desktop.background", "picture-uri")
 	}
 
